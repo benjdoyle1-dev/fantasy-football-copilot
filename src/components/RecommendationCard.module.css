@@ -1,0 +1,98 @@
+.card {
+  background: var(--color-bg-primary);
+  border: 0.5px solid var(--color-border-default);
+  border-left: 3px solid var(--color-green);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-green);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.confidence {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-green);
+  background: var(--color-green-bg);
+  border: 0.5px solid var(--color-green-border);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.change {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.playerSlot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.posBadge {
+  font-size: 10px;
+  font-weight: 500;
+  width: 36px;
+  text-align: center;
+  padding: 3px 0;
+  border-radius: 4px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 0.5px solid var(--color-border-default);
+  flex-shrink: 0;
+}
+
+.posBadgeGreen {
+  background: var(--color-green-bg);
+  color: var(--color-green);
+  border-color: var(--color-green-border);
+}
+
+.playerName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.playerNameGreen {
+  color: var(--color-green);
+}
+
+.playerProj {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+.playerProjGreen {
+  color: var(--color-green);
+}
+
+.explanation {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  border-top: 0.5px solid var(--color-border-subtle);
+  padding-top: 12px;
+}

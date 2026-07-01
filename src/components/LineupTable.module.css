@@ -1,0 +1,189 @@
+.section {
+  background: var(--color-bg-primary);
+  border: 0.5px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.applyBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--color-green);
+  border: none;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: opacity 0.15s;
+}
+
+.applyBtn:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.applyBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.colHeaders {
+  display: grid;
+  grid-template-columns: 42px 1fr 56px 50px 64px;
+  padding: 6px 16px;
+  gap: 8px;
+  border-bottom: 0.5px solid var(--color-border-subtle);
+  background: var(--color-bg-secondary);
+}
+
+.colH {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.colHLeft {
+  text-align: left;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 42px 1fr 56px 50px 64px;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 8px;
+  border-bottom: 0.5px solid var(--color-border-subtle);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.bench {
+  opacity: 0.6;
+}
+
+/* Player being moved out of the starting lineup */
+.swapOut {
+  background: color-mix(in srgb, #fef3c7 40%, transparent);
+}
+
+/* Player being moved into the starting lineup */
+.swapIn {
+  background: color-mix(in srgb, var(--color-green-bg) 50%, transparent);
+  opacity: 1;
+}
+
+.pos {
+  font-size: 10px;
+  font-weight: 500;
+  width: 34px;
+  text-align: center;
+  padding: 2px 0;
+  border-radius: 4px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-tertiary);
+  border: 0.5px solid var(--color-border-default);
+}
+
+.posGreen {
+  background: var(--color-green-bg);
+  color: var(--color-green);
+  border-color: var(--color-green-border);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nameGreen {
+  color: var(--color-green);
+}
+
+.team {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.opp {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  text-align: right;
+}
+
+.proj {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-align: right;
+}
+
+.projHigh {
+  color: var(--color-green);
+}
+
+.statusCell {
+  text-align: right;
+}
+
+.statusActive {
+  font-size: 11px;
+  color: var(--color-green);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.statusQ {
+  font-size: 11px;
+  color: var(--color-amber);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dotGreen { background: var(--color-green); }
+.dotAmber { background: var(--color-amber); }

@@ -1,0 +1,32 @@
+/* position:fixed + inset:0 pins the shell to the viewport without any
+   overflow:hidden on html/body. The browser never gets a chance to make
+   the page itself scrollable — there is no page overflow to scroll. */
+.app {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 228px;
+  grid-template-rows: 52px 1fr;
+}
+
+/* .main is a grid cell whose height is exactly (viewport - 52px).
+   overflow-y:auto makes it a scroll container.
+   min-height:0 overrides the flex/grid default of min-height:auto
+   so children can shrink below their intrinsic size without pushing
+   the container taller. */
+.main {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--color-bg-tertiary);
+}
+
+/* Prevent flex from shrinking cards to fit the viewport.
+   Without this, flex-shrink:1 compresses the section cards and
+   overflow:hidden on each card clips rows instead of letting .main scroll. */
+.main > * {
+  flex-shrink: 0;
+}

@@ -1,0 +1,166 @@
+.sidebar {
+  background: var(--color-bg-primary);
+  border-left: 0.5px solid var(--color-border-default);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoKey {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.infoVal {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.divider {
+  border: none;
+  border-top: 0.5px solid var(--color-border-subtle);
+  margin: 0;
+}
+
+.matchupCard {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.teamAbbr {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.teamRecord {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.vs {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.projRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--color-border-subtle);
+}
+
+.projItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.projVal {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.projValGreen {
+  color: var(--color-green);
+}
+
+.projLabel {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+}
+
+.winProb {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.winPct {
+  color: var(--color-green);
+  font-weight: 500;
+}
+
+.futureList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.futureBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border-subtle);
+  background: none;
+  cursor: not-allowed;
+  font-family: var(--font-sans);
+  width: 100%;
+}
+
+.futureBtn i {
+  font-size: 14px;
+}
+
+.soonPill {
+  margin-left: auto;
+  font-size: 10px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-tertiary);
+  padding: 2px 7px;
+  border-radius: 100px;
+  border: 0.5px solid var(--color-border-subtle);
+}
