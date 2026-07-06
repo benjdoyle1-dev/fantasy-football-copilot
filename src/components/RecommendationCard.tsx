@@ -1,11 +1,12 @@
-import { Recommendation } from '../types'
+import { Recommendation, WeeklyPlayerData } from '../types'
 import styles from './RecommendationCard.module.css'
 
 interface Props {
   recommendation: Recommendation | null
+  weeklyData: Map<string, WeeklyPlayerData>
 }
 
-export default function RecommendationCard({ recommendation }: Props) {
+export default function RecommendationCard({ recommendation, weeklyData }: Props) {
   if (!recommendation) {
     return (
       <div className={styles.card}>
@@ -16,13 +17,15 @@ export default function RecommendationCard({ recommendation }: Props) {
           </div>
         </div>
         <p style={{ fontSize: 13, color: 'var(--color-text-tertiary)', padding: '4px 0 8px' }}>
-          Click <strong>Optimize lineup</strong> below to generate a recommendation.
+          Your lineup looks optimal — no swaps needed.
         </p>
       </div>
     )
   }
 
   const { playerToStart, playerToBench, slot, projectedPointGain, confidence, explanation } = recommendation
+  const benchData  = weeklyData.get(playerToBench.id)
+  const startData  = weeklyData.get(playerToStart.id)
 
   return (
     <div className={styles.card}>
@@ -40,7 +43,7 @@ export default function RecommendationCard({ recommendation }: Props) {
           <div>
             <div className={styles.playerName}>{playerToBench.name}</div>
             <div className={styles.playerProj}>
-              Proj. {playerToBench.projectedPoints} pts · {playerToBench.opponent}
+              {benchData ? `Proj. ${benchData.projectedPoints} pts · ${benchData.opponent}` : '—'}
             </div>
           </div>
         </div>
@@ -52,8 +55,8 @@ export default function RecommendationCard({ recommendation }: Props) {
           <div>
             <div className={`${styles.playerName} ${styles.playerNameGreen}`}>{playerToStart.name}</div>
             <div className={`${styles.playerProj} ${styles.playerProjGreen}`}>
-              Proj. {playerToStart.projectedPoints} pts · {playerToStart.opponent}&nbsp;
-              <strong>+{projectedPointGain.toFixed(1)} pts</strong>
+              {startData ? `Proj. ${startData.projectedPoints} pts · ${startData.opponent}` : '—'}
+              &nbsp;<strong>+{projectedPointGain.toFixed(1)} pts</strong>
             </div>
           </div>
         </div>

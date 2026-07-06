@@ -1,13 +1,14 @@
-import { FantasyTeam, LineupSlot, Player, PlayerStatus, Recommendation } from '../types'
+import { FantasyTeam, InjuryStatus, LineupSlot, Player, Recommendation, WeeklyPlayerData } from '../types'
 import styles from './LineupTable.module.css'
 
 interface LineupTableProps {
   team: FantasyTeam
+  weeklyData: Map<string, WeeklyPlayerData>
   recommendation: Recommendation | null
   onApply: () => void
 }
 
-function StatusCell({ status }: { status: PlayerStatus }) {
+function StatusCell({ status }: { status: InjuryStatus }) {
   if (status === 'questionable') {
     return (
       <span className={styles.statusQ}>
@@ -25,12 +26,13 @@ function StatusCell({ status }: { status: PlayerStatus }) {
 interface PlayerRowProps {
   slot: LineupSlot
   player: Player
+  weekly: WeeklyPlayerData | undefined
   highlight?: 'swap-out' | 'swap-in' | null
   bench?: boolean
 }
 
-function PlayerRow({ slot, player, highlight, bench = false }: PlayerRowProps) {
-  const isHighScoring = player.projectedPoints >= 20
+function PlayerRow({ slot, player, weekly, highlight, bench = false }: PlayerRowProps) {
+  const isHighScoring = (weekly?.projectedPoints ?? 0) >= 20
   const rowClass = [
     styles.row,
     bench ? styles.bench : '',
@@ -49,12 +51,12 @@ function PlayerRow({ slot, player, highlight, bench = false }: PlayerRowProps) {
         </span>
         <span className={styles.team}>{player.team}</span>
       </div>
-      <div className={styles.opp}>{player.opponent}</div>
+      <div className={styles.opp}>{weekly?.opponent ?? '—'}</div>
       <div className={`${styles.proj} ${isHighScoring && !bench ? styles.projHigh : ''}`}>
-        {player.projectedPoints}
+        {weekly?.projectedPoints ?? '—'}
       </div>
       <div className={styles.statusCell}>
-        <StatusCell status={player.status} />
+        {weekly ? <StatusCell status={weekly.injuryStatus} /> : <span>—</span>}
       </div>
     </div>
   )
@@ -72,9 +74,9 @@ function ColHeaders() {
   )
 }
 
-export default function LineupTable({ team, recommendation, onApply }: LineupTableProps) {
+export default function LineupTable({ team, weeklyData, recommendation, onApply }: LineupTableProps) {
   const swapOutId = recommendation?.playerToBench.id
-  const swapInId = recommendation?.playerToStart.id
+  const swapInId  = recommendation?.playerToStart.id
 
   return (
     <>
@@ -96,6 +98,7 @@ export default function LineupTable({ team, recommendation, onApply }: LineupTab
             key={player.id}
             slot={slot}
             player={player}
+            weekly={weeklyData.get(player.id)}
             highlight={player.id === swapOutId ? 'swap-out' : null}
           />
         ))}
@@ -111,6 +114,7 @@ export default function LineupTable({ team, recommendation, onApply }: LineupTab
             key={player.id}
             slot={player.position}
             player={player}
+            weekly={weeklyData.get(player.id)}
             highlight={player.id === swapInId ? 'swap-in' : null}
             bench
           />

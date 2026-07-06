@@ -4,16 +4,24 @@ export type NFLPosition = 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF'
 // Lineup slots extend NFL positions with FLEX.
 export type LineupSlot = NFLPosition | 'FLEX'
 
-export type PlayerStatus = 'active' | 'questionable' | 'out'
+export type InjuryStatus = 'active' | 'questionable' | 'out'
 
+// Permanent player identity — does not change week to week.
 export interface Player {
   id: string
   name: string
   team: string
   position: NFLPosition
-  opponent: string
+}
+
+// Week-specific data for a player — sourced separately from player identity.
+export interface WeeklyPlayerData {
+  playerId: string
   projectedPoints: number
-  status: PlayerStatus
+  opponent: string
+  injuryStatus: InjuryStatus
+  weather: string | null
+  gameTime: string | null
 }
 
 // Pairs a player with the slot they occupy in the starting lineup.
