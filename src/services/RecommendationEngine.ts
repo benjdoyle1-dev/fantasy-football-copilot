@@ -100,6 +100,7 @@ export const RecommendationEngine = {
   apply(team: FantasyTeam, rec: Recommendation): FantasyTeam {
     const { playerToStart, playerToBench } = rec.lineup
     return {
+      name: team.name,
       starters: team.starters.map((s) =>
         s.player.id === playerToBench.id
           ? { slot: s.slot, player: playerToStart }

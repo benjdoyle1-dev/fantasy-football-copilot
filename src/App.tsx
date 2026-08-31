@@ -62,7 +62,7 @@ export default function App({ leagueProvider, playerDataService }: Props) {
 
   return (
     <div className={styles.app}>
-      <Header />
+      <Header teamName={team?.name} />
       <main className={styles.main}>
         <ScoreRow />
         <RecommendationCard recommendation={recommendation} weeklyData={weeklyData} />

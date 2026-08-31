@@ -31,6 +31,7 @@ export interface StarterSlot {
 }
 
 export interface FantasyTeam {
+  name: string
   starters: StarterSlot[]
   bench: Player[]
 }

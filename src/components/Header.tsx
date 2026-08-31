@@ -7,7 +7,9 @@ const NAV_ITEMS = [
   { label: 'AI chat', soon: true },
 ]
 
-export default function Header() {
+interface Props { teamName?: string }
+
+export default function Header({ teamName }: Props) {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
@@ -31,7 +33,7 @@ export default function Header() {
 
       <div className={styles.user}>
         <div className={styles.avatar}>BD</div>
-        <span className={styles.userName}>Ben's Team</span>
+        <span className={styles.userName}>{teamName ?? "Ben's Team"}</span>
       </div>
     </header>
   )

@@ -17,6 +17,7 @@ const keenanAllen:    Player = { id: 'keenan-allen',       name: 'Keenan Allen',
 const boNix:          Player = { id: 'bo-nix',             name: 'Bo Nix',          team: 'DEN', position: 'QB'  }
 
 export const mockTeam: FantasyTeam = {
+  name: "Ben's Team",
   starters: [
     { slot: 'QB',   player: lamarJackson  },
     { slot: 'RB',   player: bijanRobinson },
