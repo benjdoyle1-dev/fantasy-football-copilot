@@ -1,9 +1,39 @@
-import { Recommendation, WeeklyPlayerData } from '../types'
+import { Recommendation, RecommendationReason, ReasonType, WeeklyPlayerData } from '../types'
 import styles from './RecommendationCard.module.css'
 
 interface Props {
   recommendation: Recommendation | null
   weeklyData: Map<string, WeeklyPlayerData>
+}
+
+const REASON_ICONS: Record<ReasonType, string> = {
+  PROJECTION: 'ti-chart-bar',
+  INJURY:     'ti-heart-broken',
+  MATCHUP:    'ti-swords',
+  WEATHER:    'ti-cloud',
+  POSITION:   'ti-arrows-exchange',
+  OTHER:      'ti-info-circle',
+}
+
+function ImpactBadge({ impact }: { impact: RecommendationReason['impact'] }) {
+  return (
+    <span className={`${styles.impactBadge} ${styles[`impact${impact}`]}`}>
+      {impact}
+    </span>
+  )
+}
+
+function ReasonRow({ reason }: { reason: RecommendationReason }) {
+  return (
+    <div className={styles.reason}>
+      <i className={`ti ${REASON_ICONS[reason.type]} ${styles.reasonIcon}`} aria-hidden="true" />
+      <div className={styles.reasonText}>
+        <span className={styles.reasonTitle}>{reason.title}</span>
+        <span className={styles.reasonDesc}>{reason.description}</span>
+      </div>
+      <ImpactBadge impact={reason.impact} />
+    </div>
+  )
 }
 
 export default function RecommendationCard({ recommendation, weeklyData }: Props) {
@@ -23,9 +53,10 @@ export default function RecommendationCard({ recommendation, weeklyData }: Props
     )
   }
 
-  const { playerToStart, playerToBench, slot, projectedPointGain, confidence, explanation } = recommendation
-  const benchData  = weeklyData.get(playerToBench.id)
-  const startData  = weeklyData.get(playerToStart.id)
+  const { lineup, projectedGain, confidence, reasons } = recommendation
+  const { playerToStart, playerToBench, slot } = lineup
+  const benchData = weeklyData.get(playerToBench.id)
+  const startData = weeklyData.get(playerToStart.id)
 
   return (
     <div className={styles.card}>
@@ -56,16 +87,20 @@ export default function RecommendationCard({ recommendation, weeklyData }: Props
             <div className={`${styles.playerName} ${styles.playerNameGreen}`}>{playerToStart.name}</div>
             <div className={`${styles.playerProj} ${styles.playerProjGreen}`}>
               {startData ? `Proj. ${startData.projectedPoints} pts · ${startData.opponent}` : '—'}
-              &nbsp;<strong>+{projectedPointGain.toFixed(1)} pts</strong>
+              &nbsp;<strong>+{projectedGain.toFixed(1)} pts</strong>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={styles.explanation}>
-        <i className="ti ti-robot" aria-hidden="true" style={{ fontSize: 14, verticalAlign: '-2px', marginRight: 6, color: 'var(--color-text-tertiary)' }} />
-        {explanation}
-      </div>
+      {reasons.length > 0 && (
+        <div className={styles.reasons}>
+          <span className={styles.reasonsLabel}>Why we recommend this</span>
+          {reasons.map((r, i) => (
+            <ReasonRow key={i} reason={r} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

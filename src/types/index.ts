@@ -35,11 +35,32 @@ export interface FantasyTeam {
   bench: Player[]
 }
 
-export interface Recommendation {
+// ─── Recommendation reasoning ─────────────────────────────────────────────────
+
+export type ReasonType = 'INJURY' | 'PROJECTION' | 'MATCHUP' | 'WEATHER' | 'POSITION' | 'OTHER'
+export type ReasonImpact = 'LOW' | 'MEDIUM' | 'HIGH'
+
+// A single factor that contributed to the recommendation. Structured so that a
+// future LLM step can narrate verified facts rather than having to infer them.
+export interface RecommendationReason {
+  type: ReasonType
+  title: string
+  description: string
+  impact: ReasonImpact
+}
+
+// The swap the engine recommends.
+export interface LineupChange {
   playerToStart: Player
   playerToBench: Player
   slot: LineupSlot
-  projectedPointGain: number
-  confidence: number  // 0–100
-  explanation: string
+}
+
+export interface Recommendation {
+  lineup: LineupChange
+  projectedPointsBefore: number   // total starters' projected pts before the swap
+  projectedPointsAfter: number    // same with the swap applied
+  projectedGain: number           // projectedPointsAfter − projectedPointsBefore
+  confidence: number              // 0–100
+  reasons: RecommendationReason[]
 }

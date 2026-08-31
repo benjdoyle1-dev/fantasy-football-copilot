@@ -75,8 +75,8 @@ function ColHeaders() {
 }
 
 export default function LineupTable({ team, weeklyData, recommendation, onApply }: LineupTableProps) {
-  const swapOutId = recommendation?.playerToBench.id
-  const swapInId  = recommendation?.playerToStart.id
+  const swapOutId = recommendation?.lineup.playerToBench.id
+  const swapInId  = recommendation?.lineup.playerToStart.id
 
   return (
     <>
