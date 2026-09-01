@@ -89,6 +89,13 @@ export interface ESPNLeagueResponse {
   settings: ESPNLeagueSettings
 }
 
+// ─── NFL schedule types ───────────────────────────────────────────────────────
+
+export interface NFLGameInfo {
+  opponent: string   // opponent team abbreviation, e.g. "KC"
+  gameTime: string   // formatted local time string, e.g. "Sun 8:20 PM ET"
+}
+
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 //
 // Calls the Vite dev proxy at /api/espn/*, which forwards the request to
@@ -107,4 +114,52 @@ export async function fetchESPNLeague(
     throw new Error(`ESPN API returned ${response.status} for league ${leagueId}`)
   }
   return response.json()
+}
+
+// Fetches the current-week NFL schedule from ESPN's public (unauthenticated)
+// scoreboard API and returns a map of team abbreviation → opponent + game time.
+// BYE teams are absent from the map; callers should handle missing keys as BYE.
+export async function fetchNFLSchedule(): Promise<Map<string, NFLGameInfo>> {
+  const url      = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard'
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`NFL scoreboard returned ${response.status}`)
+
+  const data: {
+    events: Array<{
+      competitions: Array<{
+        date: string
+        competitors: Array<{ homeAway: string; team: { abbreviation: string } }>
+      }>
+    }>
+  } = await response.json()
+
+  const map = new Map<string, NFLGameInfo>()
+
+  for (const event of data.events ?? []) {
+    const comp        = event.competitions[0]
+    const isoDate     = comp.date
+    const gameTime    = formatKickoff(isoDate)
+    const competitors = comp.competitors
+
+    const home = competitors.find(c => c.homeAway === 'home')?.team.abbreviation
+    const away = competitors.find(c => c.homeAway === 'away')?.team.abbreviation
+    if (!home || !away) continue
+
+    map.set(home, { opponent: away, gameTime })
+    map.set(away, { opponent: home, gameTime })
+  }
+
+  return map
+}
+
+function formatKickoff(isoDate: string): string {
+  const date = new Date(isoDate)
+  const day  = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/New_York' })
+  const time = date.toLocaleTimeString('en-US', {
+    hour:     'numeric',
+    minute:   '2-digit',
+    hour12:   true,
+    timeZone: 'America/New_York',
+  })
+  return `${day} ${time} ET`
 }

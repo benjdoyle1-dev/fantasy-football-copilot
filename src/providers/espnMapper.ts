@@ -1,4 +1,4 @@
-import type { ESPNRosterEntry, ESPNLeagueResponse, ESPNLeagueSettings } from './espnClient'
+import type { ESPNRosterEntry, ESPNLeagueResponse, ESPNLeagueSettings, NFLGameInfo } from './espnClient'
 import type { Player, StarterSlot, LineupSlot, WeeklyPlayerData, LeagueInfo, ScoringFormat, CurrentMatchup, TeamRecord } from '../types'
 
 // ─── Lookup tables ────────────────────────────────────────────────────────────
@@ -73,15 +73,18 @@ export function mapPlayer(entry: ESPNRosterEntry): Player {
 export function mapWeeklyData(
   entry: ESPNRosterEntry,
   currentScoringPeriod: number,
+  scheduleMap: Map<string, NFLGameInfo> = new Map(),
 ): WeeklyPlayerData {
   const { player } = entry.playerPoolEntry
   const isDST      = entry.playerId < 0
+  const teamAbbrev = PRO_TEAM[player.proTeamId]
+  const gameInfo   = teamAbbrev && teamAbbrev !== 'FA' ? scheduleMap.get(teamAbbrev) : undefined
 
   return {
     playerId:        String(player.id),
     projectedPoints: projectedPoints(entry, currentScoringPeriod),
-    opponent:        '—',
-    gameTime:        null,
+    opponent:        gameInfo?.opponent ?? (teamAbbrev && teamAbbrev !== 'FA' ? 'BYE' : '—'),
+    gameTime:        gameInfo?.gameTime ?? null,
     weather:         '—',
     injuryStatus:    isDST ? 'active' : mapInjuryStatus(player.injuryStatus),
   }

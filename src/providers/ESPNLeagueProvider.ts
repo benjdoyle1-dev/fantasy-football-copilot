@@ -1,6 +1,6 @@
 import type { LeagueProvider } from './LeagueProvider'
 import type { FantasyTeam, WeeklyPlayerData } from '../types'
-import { fetchESPNLeague } from './espnClient'
+import { fetchESPNLeague, fetchNFLSchedule } from './espnClient'
 import { mapWeeklyData, mapRoster, mapLeagueInfo, mapCurrentMatchup } from './espnMapper'
 
 export class ESPNLeagueProvider implements LeagueProvider {
@@ -12,8 +12,11 @@ export class ESPNLeagueProvider implements LeagueProvider {
   ) {}
 
   async getTeam(): Promise<FantasyTeam> {
-    const response = await fetchESPNLeague(this.leagueId, this.season)
-    const roster   = mapRoster(response, this.swid)
+    const [response, scheduleMap] = await Promise.all([
+      fetchESPNLeague(this.leagueId, this.season),
+      fetchNFLSchedule(),
+    ])
+    const roster = mapRoster(response, this.swid)
 
     if (!roster) {
       throw new Error(
@@ -27,7 +30,7 @@ export class ESPNLeagueProvider implements LeagueProvider {
     // Populate the shared cache so ESPNNFLDataProvider can answer weekly data queries
     for (const entry of espnTeam.roster.entries) {
       if (entry.lineupSlotId === 21) continue // skip IR
-      const weekly = mapWeeklyData(entry, period)
+      const weekly = mapWeeklyData(entry, period, scheduleMap)
       this.weeklyDataCache.set(weekly.playerId, weekly)
     }
 
