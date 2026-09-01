@@ -11,21 +11,32 @@ import type { WeeklyPlayerData } from './types'
 
 const USE_ESPN = true
 
-let leagueProvider: InstanceType<typeof MockLeagueProvider | typeof ESPNLeagueProvider>
-let playerDataService: NFLPlayerDataService
-
-if (USE_ESPN) {
-  const weeklyDataCache = new Map<string, WeeklyPlayerData>()
-  leagueProvider  = new ESPNLeagueProvider(515889997, 2026, __ESPN_SWID__, weeklyDataCache)
-  playerDataService = new NFLPlayerDataService(new ESPNNFLDataProvider(weeklyDataCache))
-} else {
-  leagueProvider    = new MockLeagueProvider()
-  playerDataService = new NFLPlayerDataService(new SleeperNFLDataProvider())
+interface BackendConfig {
+  swid:     string
+  leagueId: number
+  season:   number
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App leagueProvider={leagueProvider} playerDataService={playerDataService} />
-  </StrictMode>,
-)
+async function init() {
+  let leagueProvider:    MockLeagueProvider | ESPNLeagueProvider
+  let playerDataService: NFLPlayerDataService
+
+  if (USE_ESPN) {
+    const config = await fetch('/api/config').then(r => r.json()) as BackendConfig
+    const weeklyDataCache = new Map<string, WeeklyPlayerData>()
+    leagueProvider    = new ESPNLeagueProvider(config.leagueId, config.season, config.swid, weeklyDataCache)
+    playerDataService = new NFLPlayerDataService(new ESPNNFLDataProvider(weeklyDataCache))
+  } else {
+    leagueProvider    = new MockLeagueProvider()
+    playerDataService = new NFLPlayerDataService(new SleeperNFLDataProvider())
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <App leagueProvider={leagueProvider} playerDataService={playerDataService} />
+    </StrictMode>,
+  )
+}
+
+init()
