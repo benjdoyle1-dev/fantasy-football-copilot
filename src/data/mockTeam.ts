@@ -18,6 +18,16 @@ const boNix:          Player = { id: 'bo-nix',             name: 'Bo Nix',      
 
 export const mockTeam: FantasyTeam = {
   name: "Ben's Team",
+  league: {
+    name:          'Mock League',
+    size:          12,
+    scoringFormat: 'PPR',
+    waiverInfo:    'Wed · 11:00 AM',
+  },
+  currentWeek:    1,
+  projectedScore: 0,
+  record:         { wins: 0, losses: 0, ties: 0 },
+  currentMatchup: null,
   starters: [
     { slot: 'QB',   player: lamarJackson  },
     { slot: 'RB',   player: bijanRobinson },

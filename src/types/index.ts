@@ -30,8 +30,38 @@ export interface StarterSlot {
   player: Player
 }
 
+export interface TeamRecord {
+  wins: number
+  losses: number
+  ties: number
+}
+
+export interface CurrentMatchup {
+  myAbbrev:     string
+  myProjected:  number
+  myRecord:     TeamRecord
+  oppAbbrev:    string
+  oppName:      string
+  oppProjected: number
+  oppRecord:    TeamRecord
+}
+
+export type ScoringFormat = 'PPR' | 'Half-PPR' | 'Standard'
+
+export interface LeagueInfo {
+  name: string
+  size: number
+  scoringFormat: ScoringFormat
+  waiverInfo: string   // human-readable, e.g. "Daily · 11:00 AM"
+}
+
 export interface FantasyTeam {
   name: string
+  league: LeagueInfo
+  currentWeek: number
+  projectedScore: number
+  record: TeamRecord
+  currentMatchup: CurrentMatchup | null
   starters: StarterSlot[]
   bench: Player[]
 }

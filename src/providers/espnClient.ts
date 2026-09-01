@@ -42,12 +42,51 @@ export interface ESPNTeam {
   }
 }
 
+export interface ESPNScoringItem {
+  statId: number
+  points: number
+  isReverseItem: boolean
+}
+
+export interface ESPNLeagueSettings {
+  name: string
+  size: number
+  scoringSettings: {
+    scoringType: string          // e.g. "H2H_POINTS"
+    scoringItems: ESPNScoringItem[]
+  }
+  acquisitionSettings: {
+    waiverProcessDays: string[]  // e.g. ["WEDNESDAY", "THURSDAY", ...]
+    waiverProcessHour: number    // 0–23
+  }
+}
+
+export interface ESPNMatchupSide {
+  teamId: number
+  totalPoints: number
+  totalProjectedPointsLive: number
+}
+
+export interface ESPNMatchup {
+  matchupPeriodId: number
+  home: ESPNMatchupSide
+  away: ESPNMatchupSide
+  winner: string
+}
+
 export interface ESPNLeagueResponse {
   id: number
   seasonId: number
   scoringPeriodId: number    // current week number
+  status: {
+    currentMatchupPeriod: number   // 1-based fantasy week
+    latestScoringPeriod: number
+    finalScoringPeriod: number
+    isActive: boolean
+  }
   teams: ESPNTeam[]
-  settings: { name: string }
+  schedule?: ESPNMatchup[]
+  settings: ESPNLeagueSettings
 }
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
@@ -60,7 +99,7 @@ export async function fetchESPNLeague(
   leagueId: number,
   season: number,
 ): Promise<ESPNLeagueResponse> {
-  const views = 'view=mRoster&view=mTeam&view=mSettings'
+  const views = 'view=mRoster&view=mTeam&view=mSettings&view=mMatchupScore'
   const url   = `/api/espn/seasons/${season}/segments/0/leagues/${leagueId}?${views}`
 
   const response = await fetch(url)

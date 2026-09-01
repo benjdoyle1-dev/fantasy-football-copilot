@@ -7,16 +7,18 @@ const NAV_ITEMS = [
   { label: 'AI chat', soon: true },
 ]
 
-interface Props { teamName?: string }
+interface Props { teamName?: string; currentWeek?: number }
 
-export default function Header({ teamName }: Props) {
+export default function Header({ teamName, currentWeek }: Props) {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
         <span className={styles.logo}>
           Fantasy<span className={styles.dot}>.</span>Copilot
         </span>
-        <span className={styles.weekBadge}>NFL Week 14</span>
+        <span className={styles.weekBadge}>
+          {currentWeek != null ? `NFL Week ${currentWeek}` : 'NFL'}
+        </span>
       </div>
 
       <nav className={styles.nav}>

@@ -74,7 +74,7 @@ export default function RecommendationCard({ recommendation, weeklyData }: Props
           <div>
             <div className={styles.playerName}>{playerToBench.name}</div>
             <div className={styles.playerProj}>
-              {benchData ? `Proj. ${benchData.projectedPoints} pts · ${benchData.opponent}` : '—'}
+              {benchData ? `Proj. ${benchData.projectedPoints.toFixed(2)} pts · ${benchData.opponent}` : '—'}
             </div>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function RecommendationCard({ recommendation, weeklyData }: Props
           <div>
             <div className={`${styles.playerName} ${styles.playerNameGreen}`}>{playerToStart.name}</div>
             <div className={`${styles.playerProj} ${styles.playerProjGreen}`}>
-              {startData ? `Proj. ${startData.projectedPoints} pts · ${startData.opponent}` : '—'}
+              {startData ? `Proj. ${startData.projectedPoints.toFixed(2)} pts · ${startData.opponent}` : '—'}
               &nbsp;<strong>+{projectedGain.toFixed(1)} pts</strong>
             </div>
           </div>

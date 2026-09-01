@@ -1,7 +1,12 @@
-import type { ESPNRosterEntry, ESPNLeagueResponse } from './espnClient'
-import type { Player, StarterSlot, LineupSlot, WeeklyPlayerData } from '../types'
+import type { ESPNRosterEntry, ESPNLeagueResponse, ESPNLeagueSettings } from './espnClient'
+import type { Player, StarterSlot, LineupSlot, WeeklyPlayerData, LeagueInfo, ScoringFormat, CurrentMatchup, TeamRecord } from '../types'
 
 // ─── Lookup tables ────────────────────────────────────────────────────────────
+
+// ESPN's canonical display order for starting slots
+const SLOT_DISPLAY_ORDER: Partial<Record<LineupSlot, number>> = {
+  QB: 0, RB: 1, WR: 2, TE: 3, FLEX: 4, K: 5, DEF: 6,
+}
 
 // Slots the app understands as "starting" lineup positions
 const STARTER_SLOT: Record<number, LineupSlot> = {
@@ -110,5 +115,86 @@ export function mapRoster(
     }
   }
 
+  starters.sort((a, b) =>
+    (SLOT_DISPLAY_ORDER[a.slot] ?? 99) - (SLOT_DISPLAY_ORDER[b.slot] ?? 99)
+  )
+
   return { teamName: team.name, starters, bench }
+}
+
+// ESPN stat ID 53 = receptions. The points value tells us the scoring format.
+function detectScoringFormat(settings: ESPNLeagueSettings): ScoringFormat {
+  const items = settings.scoringSettings?.scoringItems ?? []
+  const reception = items.find(i => i.statId === 53)
+  if (!reception) return 'Standard'
+  if (reception.points >= 0.9) return 'PPR'
+  if (reception.points >= 0.4) return 'Half-PPR'
+  return 'Standard'
+}
+
+// Derive a human-readable waiver description.
+// waiverProcessDays lists every day waivers run; if ≥6 days it's effectively daily.
+function formatWaiverInfo(settings: ESPNLeagueSettings): string {
+  const { waiverProcessDays, waiverProcessHour } = settings.acquisitionSettings
+  const hour   = waiverProcessHour ?? 0
+  const period = hour < 12 ? 'AM' : 'PM'
+  const h12    = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+  const timeStr = `${h12}:00 ${period}`
+
+  if (!waiverProcessDays || waiverProcessDays.length === 0) return timeStr
+
+  if (waiverProcessDays.length >= 6) return `Daily · ${timeStr}`
+
+  const SHORT: Record<string, string> = {
+    MONDAY: 'Mon', TUESDAY: 'Tue', WEDNESDAY: 'Wed',
+    THURSDAY: 'Thu', FRIDAY: 'Fri', SATURDAY: 'Sat', SUNDAY: 'Sun',
+  }
+  const days = waiverProcessDays.map(d => SHORT[d] ?? d).join(', ')
+  return `${days} · ${timeStr}`
+}
+
+function mapRecord(raw: { wins?: number; losses?: number; ties?: number } | undefined): TeamRecord {
+  return { wins: raw?.wins ?? 0, losses: raw?.losses ?? 0, ties: raw?.ties ?? 0 }
+}
+
+// Finds the authenticated user's current-week matchup and returns an
+// application-level summary. Returns null if the matchup cannot be found.
+export function mapCurrentMatchup(
+  response: ESPNLeagueResponse,
+  myTeamId: number,
+): CurrentMatchup | null {
+  const schedule = response.schedule ?? []
+  const period   = response.status.currentMatchupPeriod
+
+  const matchup = schedule.find(
+    m => m.matchupPeriodId === period &&
+      (m.home.teamId === myTeamId || m.away.teamId === myTeamId),
+  )
+  if (!matchup) return null
+
+  const mySide  = matchup.home.teamId === myTeamId ? matchup.home : matchup.away
+  const oppSide = matchup.home.teamId === myTeamId ? matchup.away : matchup.home
+
+  const myTeam  = response.teams.find(t => t.id === myTeamId)
+  const oppTeam = response.teams.find(t => t.id === oppSide.teamId)
+  if (!myTeam || !oppTeam) return null
+
+  return {
+    myAbbrev:     myTeam.abbrev,
+    myProjected:  Math.round(mySide.totalProjectedPointsLive * 10) / 10,
+    myRecord:     mapRecord(myTeam.record?.overall),
+    oppAbbrev:    oppTeam.abbrev,
+    oppName:      oppTeam.name,
+    oppProjected: Math.round(oppSide.totalProjectedPointsLive * 10) / 10,
+    oppRecord:    mapRecord(oppTeam.record?.overall),
+  }
+}
+
+export function mapLeagueInfo(settings: ESPNLeagueSettings): LeagueInfo {
+  return {
+    name:          settings.name,
+    size:          settings.size,
+    scoringFormat: detectScoringFormat(settings),
+    waiverInfo:    formatWaiverInfo(settings),
+  }
 }

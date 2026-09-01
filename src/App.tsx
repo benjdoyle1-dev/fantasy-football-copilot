@@ -62,9 +62,9 @@ export default function App({ leagueProvider, playerDataService }: Props) {
 
   return (
     <div className={styles.app}>
-      <Header teamName={team?.name} />
+      <Header teamName={team?.name} currentWeek={team?.currentWeek} />
       <main className={styles.main}>
-        <ScoreRow />
+        <ScoreRow projectedScore={team?.projectedScore} record={team?.record} />
         <RecommendationCard recommendation={recommendation} weeklyData={weeklyData} />
         {team && (
           <LineupTable
@@ -75,7 +75,7 @@ export default function App({ leagueProvider, playerDataService }: Props) {
           />
         )}
       </main>
-      <Sidebar />
+      <Sidebar league={team?.league} matchup={team?.currentMatchup} />
     </div>
   )
 }

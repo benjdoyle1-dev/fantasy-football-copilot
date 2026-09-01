@@ -53,7 +53,7 @@ function PlayerRow({ slot, player, weekly, highlight, bench = false }: PlayerRow
       </div>
       <div className={styles.opp}>{weekly?.opponent ?? '—'}</div>
       <div className={`${styles.proj} ${isHighScoring && !bench ? styles.projHigh : ''}`}>
-        {weekly?.projectedPoints ?? '—'}
+        {weekly?.projectedPoints != null ? weekly.projectedPoints.toFixed(2) : '—'}
       </div>
       <div className={styles.statusCell}>
         {weekly ? <StatusCell status={weekly.injuryStatus} /> : <span>—</span>}

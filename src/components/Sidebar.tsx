@@ -1,3 +1,4 @@
+import type { CurrentMatchup, LeagueInfo } from '../types'
 import styles from './Sidebar.module.css'
 
 const FUTURE_FEATURES = [
@@ -6,7 +7,20 @@ const FUTURE_FEATURES = [
   { icon: 'ti-message', label: 'AI chat' },
 ]
 
-export default function Sidebar() {
+interface Props {
+  league?:  LeagueInfo
+  matchup?: CurrentMatchup | null
+}
+
+function recordStr(r: CurrentMatchup['myRecord']) {
+  return r.ties > 0 ? `${r.wins}–${r.losses}–${r.ties}` : `${r.wins}–${r.losses}`
+}
+
+export default function Sidebar({ league, matchup }: Props) {
+  const formatLabel = league
+    ? `${league.scoringFormat} · ${league.size} teams`
+    : '—'
+
   return (
     <aside className={styles.sidebar}>
       <section className={styles.section}>
@@ -14,19 +28,15 @@ export default function Sidebar() {
         <div className={styles.infoList}>
           <div className={styles.infoRow}>
             <span className={styles.infoKey}>Name</span>
-            <span className={styles.infoVal}>The Gridiron</span>
+            <span className={styles.infoVal}>{league?.name ?? '—'}</span>
           </div>
           <div className={styles.infoRow}>
             <span className={styles.infoKey}>Format</span>
-            <span className={styles.infoVal}>PPR · 12 teams</span>
-          </div>
-          <div className={styles.infoRow}>
-            <span className={styles.infoKey}>Standings</span>
-            <span className={styles.infoVal}>2nd place</span>
+            <span className={styles.infoVal}>{formatLabel}</span>
           </div>
           <div className={styles.infoRow}>
             <span className={styles.infoKey}>Waiver</span>
-            <span className={styles.infoVal}>Wed 12:00 AM</span>
+            <span className={styles.infoVal}>{league?.waiverInfo ?? '—'}</span>
           </div>
         </div>
       </section>
@@ -35,30 +45,37 @@ export default function Sidebar() {
 
       <section className={styles.section}>
         <div className={styles.sectionLabel}>This week's matchup</div>
-        <div className={styles.matchupCard}>
-          <div className={styles.teams}>
-            <div className={styles.team}>
-              <span className={styles.teamAbbr}>BEN</span>
-              <span className={styles.teamRecord}>8–5</span>
+        {matchup ? (
+          <div className={styles.matchupCard}>
+            <div className={styles.teams}>
+              <div className={styles.team}>
+                <span className={styles.teamAbbr}>{matchup.myAbbrev}</span>
+                <span className={styles.teamRecord}>{recordStr(matchup.myRecord)}</span>
+              </div>
+              <span className={styles.vs}>vs</span>
+              <div className={styles.team}>
+                <span className={styles.teamAbbr}>{matchup.oppAbbrev}</span>
+                <span className={styles.teamRecord}>{recordStr(matchup.oppRecord)}</span>
+              </div>
             </div>
-            <span className={styles.vs}>vs</span>
-            <div className={styles.team}>
-              <span className={styles.teamAbbr}>MIKE</span>
-              <span className={styles.teamRecord}>7–6</span>
+            <div className={styles.projRow}>
+              <div className={styles.projItem}>
+                <span className={`${styles.projVal} ${styles.projValGreen}`}>
+                  {matchup.myProjected.toFixed(1)}
+                </span>
+                <span className={styles.projLabel}>Your proj.</span>
+              </div>
+              <div className={styles.projItem}>
+                <span className={styles.projVal}>{matchup.oppProjected.toFixed(1)}</span>
+                <span className={styles.projLabel}>Opp. proj.</span>
+              </div>
             </div>
           </div>
-          <div className={styles.projRow}>
-            <div className={styles.projItem}>
-              <span className={`${styles.projVal} ${styles.projValGreen}`}>134.7</span>
-              <span className={styles.projLabel}>Your proj.</span>
-            </div>
-            <div className={styles.projItem}>
-              <span className={styles.projVal}>121.3</span>
-              <span className={styles.projLabel}>Opp. proj.</span>
-            </div>
-          </div>
-          <div className={styles.winProb}>Win probability <span className={styles.winPct}>68%</span></div>
-        </div>
+        ) : (
+          <p style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 8 }}>
+            No matchup data available
+          </p>
+        )}
       </section>
 
       <hr className={styles.divider} />
